@@ -1,71 +1,81 @@
-'use client'
-
+"use client"
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
-const dateArray = ['25 Apr 2024', '02 May 2024', '09 May 2024', '31 May 2024', '21 Jun 2024']
+// Define a more specific type for strategy values
+type StrategyValues = {
+  [key: string]: string[];  // Dynamically typed object for date keys
+}
 
-const strategyArray = [
+type Strategy = {
+  View: string;
+  Value: StrategyValues;
+};
+
+const dateArray = ['25 Apr 2024', '02 May 2024', '09 May 2024', '31 May 2024', '21 Jun 2024'];
+
+const strategyArray: Strategy[] = [
   {
     'View': 'Bullish',
     'Value': {
       '25 Apr 2024': ['Bull Call Spread', 'Bull Put Spread', 'Long Call'],
       '02 May 2024': ['Bull Call Spread', 'Bull Put Spread', 'Long Call'],
-    }
+    },
   },
   {
     'View': 'Bearish',
     'Value': {
-      '25 Apr 2024': ['Long Put', 'Bear Put Spread', 'Bear Put Spread', 'Bear Put Spread', 'Bear Put Spread', 'Bear Put Spread', 'Bear Put Spread', 'Bear Call Spread', 'Bear Call Spread', 'Bear Call Spread', 'Bear Call Spread', 'Bear Call Spread', 'Bear Call Spread', 'Bear Call Spread'],
-    }
+      '25 Apr 2024': ['Long Put', 'Bear Put Spread', 'Bear Call Spread'],
+    },
   },
   {
     'View': 'Rangebound',
     'Value': {
       '25 Apr 2024': ['Iron Condor', 'Iron Butterfly'],
-    }
+    },
   },
   {
     'View': 'Volatile',
     'Value': {
       '25 Apr 2024': ['Long Straddle', 'Long Strangle'],
-    }
-  }
-]
+    },
+  },
+];
 
 export default function Component() {
-  const [selectedView, setSelectedView] = useState('Bearish')
-  const [selectedDate, setSelectedDate] = useState(dateArray[0])
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [selectedView, setSelectedView] = useState('Bearish');
+  const [selectedDate, setSelectedDate] = useState(dateArray[0]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleView = (view: string) => {
-    setSelectedView(view)
-  }
+    setSelectedView(view);
+  };
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen)
-  }
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
   const selectDate = (date: string) => {
-    setSelectedDate(date)
-    setIsDropdownOpen(false)
-  }
+    setSelectedDate(date);
+    setIsDropdownOpen(false);
+  };
 
+  // Fixing the error by checking if the selected date exists within the Value map
   const getStrategiesForSelectedDate = () => {
-    const viewData = strategyArray.find(item => item.View === selectedView)
-    return viewData?.Value[selectedDate] || []
-  }
+    const viewData = strategyArray.find(item => item.View === selectedView);
+    return viewData?.Value?.[selectedDate] || [];
+  };
 
   const getStrategyCount = (strategies: string[]) => {
-    const counts: { [key: string]: number } = {}
+    const counts: { [key: string]: number } = {};
     strategies.forEach(strategy => {
-      counts[strategy] = (counts[strategy] || 0) + 1
-    })
-    return Object.entries(counts).map(([name, count]) => ({ name, count }))
-  }
+      counts[strategy] = (counts[strategy] || 0) + 1;
+    });
+    return Object.entries(counts).map(([name, count]) => ({ name, count }));
+  };
 
-  const strategies = getStrategiesForSelectedDate()
-  const strategyCards = getStrategyCount(strategies)
+  const strategies = getStrategiesForSelectedDate();
+  const strategyCards = getStrategyCount(strategies);
 
   return (
     <div className="bg-gray-100 p-4">
@@ -127,5 +137,5 @@ export default function Component() {
         </div>
       </div>
     </div>
-  )
+  );
 }

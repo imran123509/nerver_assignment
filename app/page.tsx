@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import Component from "../components/strategy_view";
 
 export default function Home() {
